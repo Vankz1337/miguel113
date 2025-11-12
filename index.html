@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="id">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Film Link Tree</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', 'Arial', sans-serif;
+      background: #0f0c29;
+      background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+      min-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    html {
+      height: 100%;
+    }
+
+    /* Animated background stars */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 3s infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .container {
+      width: 90%;
+      max-width: 500px;
+      padding: 40px 20px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      margin-bottom: 50px;
+    }
+
+    .cinema-icon {
+      font-size: 70px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: rotate 10s linear infinite;
+      filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .title {
+      font-size: 42px;
+      font-weight: 800;
+      margin: 0 0 15px 0;
+      background: linear-gradient(45deg, #ff6b6b, #ffd93d, #6bcf7f, #4d96ff);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 5s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .subtitle {
+      font-size: 16px;
+      margin: 0;
+      color: #b8b8d1;
+      font-weight: 300;
+    }
+
+    .links-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .link-card {
+      position: relative;
+      text-decoration: none;
+      border-radius: 20px;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .link-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: inherit;
+      transition: transform 0.4s ease;
+      z-index: -1;
+    }
+
+    .link-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .link-card:hover::before {
+      transform: scale(1.1);
+    }
+
+    .link-card:active {
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    .card-kungfu {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    }
+
+    .card-china {
+      background: linear-gradient(135deg, #ffd93d 0%, #f6c23e 100%);
+    }
+
+    .card-hollywood {
+      background: linear-gradient(135deg, #6bcf7f 0%, #4ecdc4 100%);
+    }
+
+    .card-all {
+      background: linear-gradient(135deg, #4d96ff 0%, #6c5ce7 100%);
+      grid-column: 1 / -1;
+    }
+
+    .card-icon {
+      font-size: 48px;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin: 0;
+    }
+
+    .card-arrow {
+      font-size: 20px;
+      color: white;
+      opacity: 0.8;
+      transition: transform 0.3s ease;
+    }
+
+    .link-card:hover .card-arrow {
+      transform: translateX(5px);
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 32px;
+      }
+
+      .subtitle {
+        font-size: 14px;
+      }
+
+      .links-container {
+        grid-template-columns: 1fr;
+      }
+
+      .card-all {
+        grid-column: 1;
+      }
+
+      .link-card {
+        padding: 25px 20px;
+      }
+
+      .card-icon {
+        font-size: 40px;
+      }
+
+      .card-title {
+        font-size: 16px;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="stars" id="stars"></div>
+  <div class="container">
+   <div class="header">
+    <div class="cinema-icon">
+     🎥
+    </div>
+    <h1 class="title" id="page-title">Cinema Hub</h1>
+    <p class="subtitle" id="page-subtitle">Jelajahi dunia film favorit Anda</p>
+   </div>
+   <div class="links-container"><a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="link-card card-kungfu"> <span class="card-icon">🥋</span> <h3 class="card-title" id="kungfu-title">Film Kungfu</h3><span class="card-arrow">→</span> </a> <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="link-card card-china"> <span class="card-icon">🏮</span> <h3 class="card-title" id="china-title">Film Cina</h3><span class="card-arrow">→</span> </a> <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="link-card card-hollywood"> <span class="card-icon">🎭</span> <h3 class="card-title" id="hollywood-title">Film Hollywood</h3><span class="card-arrow">→</span> </a> <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" class="link-card card-all"> <span class="card-icon">🌟</span> <h3 class="card-title" id="all-films-title">Semua Film</h3><span class="card-arrow">→</span> </a>
+   </div>
+  </div>
+  <script>
+    // Create animated stars
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random() * 3 + 'px';
+        star.style.height = star.style.width;
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsContainer.appendChild(star);
+      }
+    }
+
+    createStars();
+
+    const defaultConfig = {
+      page_title: "Cinema Hub",
+      page_subtitle: "Jelajahi dunia film favorit Anda",
+      kungfu_title: "Film Kungfu",
+      china_title: "Film Cina",
+      hollywood_title: "Film Hollywood",
+      all_films_title: "Semua Film",
+      background_color: "#0f0c29",
+      card_kungfu_color: "#ff6b6b",
+      card_china_color: "#ffd93d",
+      card_hollywood_color: "#6bcf7f",
+      card_all_color: "#4d96ff",
+      font_family: "Poppins",
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'Arial, sans-serif';
+      const baseSize = config.font_size || defaultConfig.font_size;
+
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+
+      const bgColor = config.background_color || defaultConfig.background_color;
+      document.body.style.background = bgColor;
+      document.body.style.background = `linear-gradient(to bottom, ${bgColor}, #302b63, #24243e)`;
+
+      document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('page-title').style.fontSize = `${baseSize * 2.625}px`;
+
+      document.getElementById('page-subtitle').textContent = config.page_subtitle || defaultConfig.page_subtitle;
+      document.getElementById('page-subtitle').style.fontSize = `${baseSize}px`;
+
+      document.getElementById('kungfu-title').textContent = config.kungfu_title || defaultConfig.kungfu_title;
+      document.getElementById('kungfu-title').style.fontSize = `${baseSize * 1.125}px`;
+
+      document.getElementById('china-title').textContent = config.china_title || defaultConfig.china_title;
+      document.getElementById('china-title').style.fontSize = `${baseSize * 1.125}px`;
+
+      document.getElementById('hollywood-title').textContent = config.hollywood_title || defaultConfig.hollywood_title;
+      document.getElementById('hollywood-title').style.fontSize = `${baseSize * 1.125}px`;
+
+      document.getElementById('all-films-title').textContent = config.all_films_title || defaultConfig.all_films_title;
+      document.getElementById('all-films-title').style.fontSize = `${baseSize * 1.125}px`;
+
+      const kungfuCard = document.querySelector('.card-kungfu');
+      const kungfuColor = config.card_kungfu_color || defaultConfig.card_kungfu_color;
+      kungfuCard.style.background = `linear-gradient(135deg, ${kungfuColor} 0%, ${kungfuColor} 100%)`;
+
+      const chinaCard = document.querySelector('.card-china');
+      const chinaColor = config.card_china_color || defaultConfig.card_china_color;
+      chinaCard.style.background = `linear-gradient(135deg, ${chinaColor} 0%, ${chinaColor} 100%)`;
+
+      const hollywoodCard = document.querySelector('.card-hollywood');
+      const hollywoodColor = config.card_hollywood_color || defaultConfig.card_hollywood_color;
+      hollywoodCard.style.background = `linear-gradient(135deg, ${hollywoodColor} 0%, ${hollywoodColor} 100%)`;
+
+      const allCard = document.querySelector('.card-all');
+      const allColor = config.card_all_color || defaultConfig.card_all_color;
+      allCard.style.background = `linear-gradient(135deg, ${allColor} 0%, ${allColor} 100%)`;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.card_kungfu_color || defaultConfig.card_kungfu_color,
+              set: (value) => {
+                config.card_kungfu_color = value;
+                window.elementSdk.setConfig({ card_kungfu_color: value });
+              }
+            },
+            {
+              get: () => config.card_china_color || defaultConfig.card_china_color,
+              set: (value) => {
+                config.card_china_color = value;
+                window.elementSdk.setConfig({ card_china_color: value });
+              }
+            },
+            {
+              get: () => config.card_hollywood_color || defaultConfig.card_hollywood_color,
+              set: (value) => {
+                config.card_hollywood_color = value;
+                window.elementSdk.setConfig({ card_hollywood_color: value });
+              }
+            },
+            {
+              get: () => config.card_all_color || defaultConfig.card_all_color,
+              set: (value) => {
+                config.card_all_color = value;
+                window.elementSdk.setConfig({ card_all_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["page_title", config.page_title || defaultConfig.page_title],
+          ["page_subtitle", config.page_subtitle || defaultConfig.page_subtitle],
+          ["kungfu_title", config.kungfu_title || defaultConfig.kungfu_title],
+          ["china_title", config.china_title || defaultConfig.china_title],
+          ["hollywood_title", config.hollywood_title || defaultConfig.hollywood_title],
+          ["all_films_title", config.all_films_title || defaultConfig.all_films_title]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99d2202410e7244a',t:'MTc2MjkwOTU3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
